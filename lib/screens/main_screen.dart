@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
-import 'chart_screen.dart';      // 추가됨
+import 'search_screen.dart';      // 검색 화면
 import 'community_screen.dart'; // 추가됨
 import 'mypage_screen.dart';
 class MainScreen extends StatefulWidget {
@@ -16,9 +16,8 @@ class _MainScreenState extends State<MainScreen> {
   // 나머지 화면들은 일단 텍스트로 대체 (파일 생성 후 교체 가능)
   final List<Widget> _pages = [
     const HomeScreen(),
-    const ChartScreen(),      // 차트 화면 연결
+    const SearchScreen(),      // 검색 화면 연결
     const CommunityScreen(),  // 커뮤니티 화면 연결
-    const MyPageScreen(),     // 마이페이지 화면 연결 (이미 만듦)
   ];
 
   void _onItemTapped(int index) {
@@ -40,9 +39,8 @@ class _MainScreenState extends State<MainScreen> {
         showUnselectedLabels: true,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '차트'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: '검색'),
           BottomNavigationBarItem(icon: Icon(Icons.cloud_upload), label: '커뮤니티'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: '프로필'),
         ],
       ),
     );
