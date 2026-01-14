@@ -1,6 +1,6 @@
 // lib/screens/signup_screen.dart
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../services/api_service.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -15,13 +15,12 @@ class _SignupScreenState extends State<SignupScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   
-  final _authService = AuthService();
   bool _isLoading = false;
 
   void _trySignup() async {
     setState(() => _isLoading = true);
 
-    bool success = await _authService.signUp(
+    bool success = await ApiService.register(
       _emailController.text,
       _passwordController.text,
       _nameController.text,
@@ -90,10 +89,10 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             const SizedBox(height: 30),
             
-            _buildTextField(_emailController, '이메일 (memberEmail)', Icons.email),
-            _buildTextField(_passwordController, '비밀번호 (memberPassword)', Icons.lock, isObscure: true),
-            _buildTextField(_nameController, '이름 (memberName)', Icons.person),
-            _buildTextField(_phoneController, '전화번호 (memberPhone)', Icons.phone),
+            _buildTextField(_emailController, '이메일', Icons.email),
+            _buildTextField(_passwordController, '비밀번호', Icons.lock, isObscure: true),
+            _buildTextField(_nameController, '이름', Icons.person),
+            _buildTextField(_phoneController, '전화번호', Icons.phone),
 
             const SizedBox(height: 20),
             SizedBox(

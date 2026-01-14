@@ -1,8 +1,8 @@
 // lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
 import 'signup_screen.dart';
 import 'main_screen.dart';
+import '../services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,34 +14,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
   bool _isLoading = false;
-
-  void _tryLogin() async {
-    setState(() => _isLoading = true);
-    
-    // 로그인 시도
-    bool success = await _authService.login(
-      _emailController.text,
-      _passwordController.text,
-    );
-
-    setState(() => _isLoading = false);
-
-    if (success) {
-      // 로그인 성공 시 홈 화면(MainScreen)으로 이동 (뒤로가기 방지)
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-      );
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('로그인 실패! 이메일과 비밀번호를 확인하세요.')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,18 +82,45 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _tryLogin,
+                  onPressed: _isLoading ? null : () async {
+                    final email = _emailController.text;
+                    final password = _passwordController.text;
+
+                    if (email.isEmpty || password.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('이메일과 비밀번호를 입력해주세요.')),
+                      );
+                      return;
+                    }
+
+                    setState(() => _isLoading = true);
+                    bool isSuccess = await ApiService.login(email, password);
+                    setState(() => _isLoading = false);
+
+                    if (isSuccess && mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MainScreen()),
+                      );
+                    } else if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('로그인 실패! 이메일과 비밀번호를 확인하세요.')),
+                      );
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF2D55),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
                           '로그인',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                 ),
               ),
